@@ -1,0 +1,50 @@
+:root {
+    --bg: #0b0d12;
+    --card: #121620;
+    --border: #252b38;
+    --text: #f5f7fb;
+    --muted: #9aa4b2;
+    --accent: #8b5cf6;
+}
+.stApp {
+    background:
+      radial-gradient(circle at 10% 0%, rgba(139,92,246,.14), transparent 30%),
+      radial-gradient(circle at 90% 10%, rgba(59,130,246,.10), transparent 25%),
+      var(--bg);
+    color: var(--text);
+}
+.block-container { max-width: 1400px; padding-top: 2rem; }
+.hero { padding: 35px 0 28px; }
+.eyebrow { letter-spacing: 4px; font-size: .75rem; color: #a78bfa; font-weight: 800; }
+.hero h1 { font-size: 3.1rem; margin: 8px 0; }
+.hero p { color: var(--muted); font-size: 1.1rem; max-width: 760px; }
+.result-count { color: var(--muted); margin: 20px 0; }
+.card {
+    min-height: 175px;
+    padding: 20px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(18,22,32,.96), rgba(12,15,22,.96));
+    box-shadow: 0 8px 30px rgba(0,0,0,.16);
+}
+.card:hover { border-color: #6d4cc5; transform: translateY(-2px); }
+.card h3 { margin: 10px 0 7px; font-size: 1.15rem; }
+.card p { color: var(--muted); min-height: 42px; }
+.tag {
+    display: inline-block;
+    font-size: .72rem;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(139,92,246,.13);
+    color: #c4b5fd;
+}
+.syntax {
+    color: #d1d5db;
+    font-family: monospace;
+    font-size: .8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+div[data-testid="stCodeBlock"] { border-radius: 10px; }
