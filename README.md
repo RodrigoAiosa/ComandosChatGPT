@@ -78,3 +78,21 @@ Ao posicionar o mouse sobre um card:
 6. Ao retirar o mouse, o card retorna automaticamente à posição inicial.
 
 O efeito é realizado no navegador usando CSS, portanto não exige JavaScript.
+
+
+## Correção do efeito 3D
+
+Os cards são renderizados com `streamlit.components.v1.html()`.
+
+Isso é importante porque o HTML do card possui uma estrutura complexa
+(`div` aninhadas, CSS 3D e `:hover`). Em algumas versões/configurações
+do Streamlit, `st.markdown(..., unsafe_allow_html=True)` pode interpretar
+o conteúdo como Markdown e exibir as tags HTML literalmente.
+
+Com `components.html()`:
+
+- o HTML é renderizado em um componente isolado;
+- o CSS 3D é aplicado diretamente no navegador;
+- o `:hover` funciona corretamente;
+- `rotateY(180deg)` gira o card;
+- o restante da aplicação Streamlit permanece inalterado.
