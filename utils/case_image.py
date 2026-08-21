@@ -6,14 +6,38 @@ do catálogo.
 
 import io
 import textwrap
+from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
 CANVAS_SIZE = 1080
 
-FONT_DIR = "/usr/share/fonts/truetype/dejavu"
-FONT_BOLD = f"{FONT_DIR}/DejaVuSans-Bold.ttf"
-FONT_REGULAR = f"{FONT_DIR}/DejaVuSans.ttf"
+# Fontes empacotadas dentro do próprio projeto (assets/fonts), para não
+# depender de fontes do sistema operacional do servidor de deploy.
+_FONTS_DIR = Path(__file__).resolve().parent.parent / "assets" / "fonts"
+
+_BOLD_CANDIDATES = [
+    _FONTS_DIR / "DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+]
+_REGULAR_CANDIDATES = [
+    _FONTS_DIR / "DejaVuSans.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+]
+
+
+def _load_font(candidates: list, size: int) -> ImageFont.FreeTypeFont:
+    for candidate in candidates:
+        try:
+            return ImageFont.truetype(str(candidate), size)
+        except (OSError, IOError):
+            continue
+    # Último recurso: fonte padrão do Pillow (bitmap), para nunca quebrar
+    # a geração da imagem mesmo se nenhuma fonte TrueType for encontrada.
+    try:
+        return ImageFont.load_default(size=size)
+    except TypeError:
+        return ImageFont.load_default()
 
 BG_TOP = (18, 22, 32)
 BG_BOTTOM = (27, 19, 49)
@@ -87,13 +111,13 @@ def generate_case_image(command: str, category: str, description: str, example: 
     img = _vertical_gradient(CANVAS_SIZE, BG_TOP, BG_BOTTOM)
     draw = ImageDraw.Draw(img)
 
-    font_eyebrow = ImageFont.truetype(FONT_BOLD, 26)
-    font_tag = ImageFont.truetype(FONT_BOLD, 26)
-    font_title = ImageFont.truetype(FONT_BOLD, 52)
-    font_command = ImageFont.truetype(FONT_BOLD, 72)
-    font_label = ImageFont.truetype(FONT_BOLD, 30)
-    font_body = ImageFont.truetype(FONT_REGULAR, 30)
-    font_footer = ImageFont.truetype(FONT_REGULAR, 24)
+    font_eyebrow = _load_font(_BOLD_CANDIDATES, 26)
+    font_tag = _load_font(_BOLD_CANDIDATES, 26)
+    font_title = _load_font(_BOLD_CANDIDATES, 52)
+    font_command = _load_font(_BOLD_CANDIDATES, 72)
+    font_label = _load_font(_BOLD_CANDIDATES, 30)
+    font_body = _load_font(_REGULAR_CANDIDATES, 30)
+    font_footer = _load_font(_REGULAR_CANDIDATES, 24)
 
     margin = 70
 
