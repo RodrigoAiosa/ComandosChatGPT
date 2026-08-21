@@ -16,6 +16,7 @@ Construído em Python + [Streamlit](https://streamlit.io/), com cards 3D interat
   - [Linux/macOS](#linuxmacos)
 - [Como usar](#-como-usar)
 - [Playbooks guiados](#-playbooks-guiados)
+- [Imagem de case (Antes × Depois)](#️-imagem-de-case-antes--depois)
 - [Adicionando novos comandos](#-adicionando-novos-comandos)
 - [Adicionando novos playbooks](#-adicionando-novos-playbooks)
 - [Efeito 3D dos comandos](#-efeito-3d-dos-comandos)
@@ -43,8 +44,9 @@ A ideia é simples: em vez de reescrever o mesmo tipo de prompt toda vez, você 
 - 🎴 Cards visuais com efeito 3D (flip ao passar o mouse)
 - 📋 Botão de copiar exemplo direto para a área de transferência
 - 🧩 Playbooks guiados: sequências de comandos passo a passo para objetivos completos
+- 🖼️ Geração de imagem "Antes × Depois" para qualquer comando, pronta para LinkedIn/Instagram
 - 🧱 Estrutura modular para adicionar novos comandos e playbooks facilmente
-- ✅ Testes unitários (`pytest`) cobrindo filtros e playbooks
+- ✅ Testes unitários (`pytest`) cobrindo filtros, playbooks e geração de imagem
 
 ---
 
@@ -64,10 +66,12 @@ ComandosChatGPT/
 │   └── playbooks.py          # Sequências guiadas (playbooks) de comandos
 ├── tests/
 │   ├── test_filters.py       # Testes unitários dos filtros
-│   └── test_playbooks.py     # Testes unitários dos playbooks
+│   ├── test_playbooks.py     # Testes unitários dos playbooks
+│   └── test_case_image.py    # Testes unitários da imagem de case
 └── utils/
     ├── __init__.py
-    └── filters.py            # Lógica de busca e filtragem
+    ├── filters.py            # Lógica de busca e filtragem
+    └── case_image.py          # Geração da imagem "Antes x Depois"
 ```
 
 ---
@@ -138,6 +142,21 @@ Playbooks disponíveis atualmente:
 | Proposta comercial de treinamento | Escopo → conteúdo → precificação → proposta → e-mail → follow-up |
 | Case de portfólio para o LinkedIn | Case → storytelling → hook → carrossel → CTA |
 | Arquitetura de dados moderna | Arquitetura → data lake → lakehouse → data warehouse → end-to-end |
+
+---
+
+## 🖼️ Imagem de case (Antes × Depois)
+
+Para qualquer comando, seja no catálogo ou na etapa atual de um playbook, é possível gerar uma imagem quadrada (1080x1080) no formato "Antes × Depois", pronta para publicar no LinkedIn ou Instagram.
+
+Como usar:
+
+1. Abra o expansor com o nome do comando (no catálogo, logo abaixo do grid de cards; nos playbooks, logo abaixo do card da etapa atual).
+2. Clique em **🖼️ Gerar imagem (Antes × Depois)**.
+3. A imagem aparece com um preview: categoria, nome do comando, uma dor genérica de "antes" (baseada na categoria) e o "depois" (baseado na descrição do comando).
+4. Clique em **⬇️ Baixar PNG (LinkedIn/Instagram)** para salvar o arquivo.
+
+A imagem é gerada com `Pillow` (`utils/case_image.py`), sem depender de nenhuma API externa de geração de imagem. O texto de "antes" vem de um dicionário de dores genéricas por categoria (`CATEGORY_PAIN`); o "depois" combina o próprio comando com a descrição cadastrada no catálogo.
 
 ---
 
