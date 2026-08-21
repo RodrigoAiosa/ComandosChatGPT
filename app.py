@@ -120,7 +120,7 @@ else:
         </div>
 
         <div class="flip-card-back">
-            <div>
+            <div class="back-scroll">
                 <div class="tag">{category_name}</div>
                 <h3>{command}</h3>
 
@@ -136,15 +136,16 @@ else:
 
                 <div class="detail-label">EXEMPLO</div>
                 <div class="example-box">{example}</div>
+            </div>
 
+            <div class="back-actions">
                 <button class="copy-btn" onclick='copyExample(this, {copy_payload})'>
                     📋 Copiar exemplo
                 </button>
-            </div>
-
-            <div class="flip-hint">
-                <span>↻</span>
-                Mova o mouse para voltar
+                <div class="flip-hint">
+                    <span>↻</span>
+                    Mova o mouse para voltar
+                </div>
             </div>
         </div>
 
@@ -190,7 +191,7 @@ html, body {{
 
 .flip-card {{
     width: 100%;
-    height: 255px;
+    height: 320px;
     perspective: 1200px;
 }}
 
@@ -237,6 +238,31 @@ html, body {{
     background: linear-gradient(145deg, #1b1331, #0d0f1b);
     transform: rotateY(180deg);
     border-color: rgba(139,92,246,.65);
+    justify-content: flex-start;
+}}
+
+.back-scroll {{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}}
+
+.back-scroll::-webkit-scrollbar {{
+    width: 5px;
+}}
+
+.back-scroll::-webkit-scrollbar-thumb {{
+    background: rgba(139,92,246,.4);
+    border-radius: 3px;
+}}
+
+.back-actions {{
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
 }}
 
 .flip-card:hover .flip-card-front,
@@ -329,7 +355,6 @@ p {{
 }}
 
 .copy-btn {{
-    margin-top: 6px;
     padding: 6px 10px;
     font-size: 11px;
     font-weight: 600;
@@ -375,7 +400,7 @@ function copyExample(btn, text) {{
 </html>
 """
 
-    components.html(grid_html, height=n_rows * 275 + 20, scrolling=False)
+    components.html(grid_html, height=n_rows * 340 + 20, scrolling=False)
 
 
 st.markdown(
