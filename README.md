@@ -15,7 +15,9 @@ Construído em Python + [Streamlit](https://streamlit.io/), com cards 3D interat
   - [Windows](#windows)
   - [Linux/macOS](#linuxmacos)
 - [Como usar](#-como-usar)
+- [Playbooks guiados](#-playbooks-guiados)
 - [Adicionando novos comandos](#-adicionando-novos-comandos)
+- [Adicionando novos playbooks](#-adicionando-novos-playbooks)
 - [Efeito 3D dos comandos](#-efeito-3d-dos-comandos)
 - [Por que `components.html()` e não `st.markdown()`](#-por-que-componentshtml-e-não-stmarkdown)
 - [Testes](#-testes)
@@ -29,7 +31,7 @@ Trabalhar com ChatGPT no dia a dia de Dados, BI e Automação costuma envolver o
 
 O **Command Hub** nasceu para resolver isso: uma central única, pesquisável e visual, com comandos padronizados (`/COMANDO: contexto`) prontos para copiar e colar diretamente no ChatGPT. Cada comando tem uma categoria, uma descrição do que faz e um exemplo prático de uso.
 
-A ideia é simples em vez de reescrever o mesmo tipo de prompt toda vez, você pesquisa o comando, entende como ele funciona no verso do card e copia o exemplo pronto.
+A ideia é simples — em vez de reescrever o mesmo tipo de prompt toda vez, você pesquisa o comando, entende como ele funciona no verso do card e copia o exemplo pronto. Para objetivos maiores, os **playbooks guiados** encadeiam vários comandos em uma sequência passo a passo, do início ao fim de um projeto.
 
 ---
 
@@ -40,8 +42,9 @@ A ideia é simples em vez de reescrever o mesmo tipo de prompt toda vez, você p
 - ↕️ Ordenação por comando, categoria ou descrição
 - 🎴 Cards visuais com efeito 3D (flip ao passar o mouse)
 - 📋 Botão de copiar exemplo direto para a área de transferência
-- 🧩 Estrutura modular para adicionar novos comandos facilmente
-- ✅ Testes unitários (`pytest`) cobrindo a lógica de filtros
+- 🧩 Playbooks guiados: sequências de comandos passo a passo para objetivos completos
+- 🧱 Estrutura modular para adicionar novos comandos e playbooks facilmente
+- ✅ Testes unitários (`pytest`) cobrindo filtros e playbooks
 
 ---
 
@@ -57,9 +60,11 @@ ComandosChatGPT/
 │   └── styles.css          # Estilos globais da interface
 ├── commands/
 │   ├── __init__.py
-│   └── catalog.py           # Catálogo com todos os comandos
+│   ├── catalog.py           # Catálogo com todos os comandos
+│   └── playbooks.py          # Sequências guiadas (playbooks) de comandos
 ├── tests/
-│   └── test_filters.py      # Testes unitários dos filtros
+│   ├── test_filters.py       # Testes unitários dos filtros
+│   └── test_playbooks.py     # Testes unitários dos playbooks
 └── utils/
     ├── __init__.py
     └── filters.py            # Lógica de busca e filtragem
@@ -97,12 +102,42 @@ Depois disso, a aplicação abre automaticamente em `http://localhost:8501`.
 
 ## 🕹️ Como usar
 
+A aplicação tem duas abas: **📚 Catálogo de comandos** e **🧩 Playbooks guiados**.
+
+### Catálogo de comandos
+
 1. Digite um termo na barra de pesquisa (ex.: `DAX`, `dashboard`, `ROI`).
 2. Opcionalmente, selecione uma ou mais categorias no filtro.
 3. Escolha a ordenação desejada (Comando, Categoria ou Descrição).
 4. Passe o mouse sobre um card para ver a explicação completa, a descrição e o exemplo.
 5. Clique em **📋 Copiar exemplo** no verso do card para copiar o comando pronto.
 6. Cole o comando no ChatGPT, ajustando o contexto conforme sua necessidade.
+
+---
+
+## 🧩 Playbooks guiados
+
+Um **playbook** é uma sequência de comandos encadeados para resolver um objetivo completo, do início ao fim — por exemplo, "Criar um dashboard do zero" percorre `/SCOPE` → `/MODEL` → `/DAX` → `/DASHBOARD` → `/LINKEDIN`.
+
+Na aba **🧩 Playbooks guiados**:
+
+1. Escolha um playbook no seletor.
+2. Leia a descrição geral do objetivo.
+3. A barra de progresso e o card mostram a etapa atual, com o comando, a descrição, o exemplo e uma nota explicando o porquê daquele passo na sequência.
+4. Use **📋 Copiar exemplo** para copiar o comando da etapa atual.
+5. Navegue com **◀ Anterior** / **Próximo ▶**, ou **↺ Reiniciar** para voltar ao início.
+6. O checklist abaixo do card mostra todas as etapas do playbook, marcando quais já foram concluídas (✅), qual está em andamento (▶️) e quais ainda faltam (⬜).
+
+Playbooks disponíveis atualmente:
+
+| Playbook | Objetivo |
+|---|---|
+| Criar um dashboard do zero | Escopo → modelo → DAX → dashboard → divulgação no LinkedIn |
+| Auditoria e otimização de Power BI | Diagnóstico → modelagem → performance → boas práticas |
+| Projeto de automação em Python | Escopo → ETL → Python → automação → GitHub → portfólio |
+| Proposta comercial de treinamento | Escopo → conteúdo → precificação → proposta → e-mail → follow-up |
+| Case de portfólio para o LinkedIn | Case → storytelling → hook → carrossel → CTA |
+| Arquitetura de dados moderna | Arquitetura → data lake → lakehouse → data warehouse → end-to-end |
 
 ---
 
@@ -120,6 +155,27 @@ Edite `commands/catalog.py` e inclua um novo dicionário na lista `COMMANDS`:
 ```
 
 Não é necessário alterar `app.py` — a interface lê o catálogo dinamicamente e já exibe o novo comando na busca, no filtro de categoria e nos cards.
+
+---
+
+## 🧭 Adicionando novos playbooks
+
+Edite `commands/playbooks.py` e inclua um novo dicionário na lista `PLAYBOOKS`:
+
+```python
+{
+    "id": "meu-playbook",
+    "title": "Título do playbook",
+    "description": "O que esse playbook ajuda a resolver, de ponta a ponta.",
+    "steps": [
+        {"command": "/SCOPE", "note": "Por que essa etapa entra aqui."},
+        {"command": "/DASHBOARD", "note": "O que essa etapa produz."},
+        # ... quantas etapas fizerem sentido
+    ],
+}
+```
+
+Cada `command` referenciado precisa existir em `commands/catalog.py` — os testes em `tests/test_playbooks.py` validam isso automaticamente. A interface (`app.py`) lê a lista dinamicamente, então nenhum outro arquivo precisa ser alterado.
 
 ---
 
