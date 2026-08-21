@@ -1,6 +1,6 @@
 # ⚡ Command Hub
 
-**Biblioteca pesquisável de comandos para ChatGPT**, organizada por categoria — Dados, BI, SQL, Python, IA/Machine Learning, Cloud, Git/DevOps, Excel, Estatística, Gestão, Projetos, Comercial, Conteúdo, Carreira, Governança e mais.
+**Biblioteca pesquisável de comandos para ChatGPT**, organizada por categoria: Dados, BI, SQL, Python, IA/Machine Learning, Cloud, Git/DevOps, Excel, Estatística, Gestão, Projetos, Comercial, Conteúdo, Carreira, Governança e mais.
 
 Construído em Python + [Streamlit](https://streamlit.io/), com cards 3D interativos, busca em tempo real e botão de copiar exemplo com um clique.
 
@@ -27,11 +27,11 @@ Construído em Python + [Streamlit](https://streamlit.io/), com cards 3D interat
 
 ## 📖 Introdução
 
-Trabalhar com ChatGPT no dia a dia de Dados, BI e Automação costuma envolver os mesmos tipos de pedido repetidos várias vezes — criar uma consulta SQL, otimizar uma medida DAX, montar um dashboard, escrever um post para o LinkedIn, estruturar um projeto no GitHub, entre outros.
+Trabalhar com ChatGPT no dia a dia de Dados, BI e Automação costuma envolver os mesmos tipos de pedido repetidos várias vezes: criar uma consulta SQL, otimizar uma medida DAX, montar um dashboard, escrever um post para o LinkedIn, estruturar um projeto no GitHub, entre outros.
 
 O **Command Hub** nasceu para resolver isso: uma central única, pesquisável e visual, com comandos padronizados (`/COMANDO: contexto`) prontos para copiar e colar diretamente no ChatGPT. Cada comando tem uma categoria, uma descrição do que faz e um exemplo prático de uso.
 
-A ideia é simples — em vez de reescrever o mesmo tipo de prompt toda vez, você pesquisa o comando, entende como ele funciona no verso do card e copia o exemplo pronto. Para objetivos maiores, os **playbooks guiados** encadeiam vários comandos em uma sequência passo a passo, do início ao fim de um projeto.
+A ideia é simples: em vez de reescrever o mesmo tipo de prompt toda vez, você pesquisa o comando, entende como ele funciona no verso do card e copia o exemplo pronto. Para objetivos maiores, os **playbooks guiados** encadeiam vários comandos em uma sequência passo a passo, do início ao fim de um projeto.
 
 ---
 
@@ -117,7 +117,7 @@ A aplicação tem duas abas: **📚 Catálogo de comandos** e **🧩 Playbooks g
 
 ## 🧩 Playbooks guiados
 
-Um **playbook** é uma sequência de comandos encadeados para resolver um objetivo completo, do início ao fim — por exemplo, "Criar um dashboard do zero" percorre `/SCOPE` → `/MODEL` → `/DAX` → `/DASHBOARD` → `/LINKEDIN`.
+Um **playbook** é uma sequência de comandos encadeados para resolver um objetivo completo, do início ao fim, por exemplo, "Criar um dashboard do zero" percorre `/SCOPE` → `/MODEL` → `/DAX` → `/DASHBOARD` → `/LINKEDIN`.
 
 Na aba **🧩 Playbooks guiados**:
 
@@ -154,7 +154,7 @@ Edite `commands/catalog.py` e inclua um novo dicionário na lista `COMMANDS`:
 }
 ```
 
-Não é necessário alterar `app.py` — a interface lê o catálogo dinamicamente e já exibe o novo comando na busca, no filtro de categoria e nos cards.
+Não é necessário alterar `app.py`: a interface lê o catálogo dinamicamente e já exibe o novo comando na busca, no filtro de categoria e nos cards.
 
 ---
 
@@ -175,7 +175,7 @@ Edite `commands/playbooks.py` e inclua um novo dicionário na lista `PLAYBOOKS`:
 }
 ```
 
-Cada `command` referenciado precisa existir em `commands/catalog.py` — os testes em `tests/test_playbooks.py` validam isso automaticamente. A interface (`app.py`) lê a lista dinamicamente, então nenhum outro arquivo precisa ser alterado.
+Cada `command` referenciado precisa existir em `commands/catalog.py`. Os testes em `tests/test_playbooks.py` validam isso automaticamente. A interface (`app.py`) lê a lista dinamicamente, então nenhum outro arquivo precisa ser alterado.
 
 ---
 
@@ -190,7 +190,7 @@ Cada comando é apresentado como um card interativo. Ao posicionar o mouse sobre
 5. O verso apresenta a explicação, a descrição, o exemplo e o botão de copiar.
 6. Ao retirar o mouse, o card retorna automaticamente à posição inicial.
 
-O efeito é realizado inteiramente no navegador usando CSS — não depende de JavaScript para girar o card (o JavaScript é usado apenas para o botão de copiar).
+O efeito é realizado inteiramente no navegador usando CSS; não depende de JavaScript para girar o card (o JavaScript é usado apenas para o botão de copiar).
 
 ---
 
