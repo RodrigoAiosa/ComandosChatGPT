@@ -8,6 +8,7 @@ import streamlit.components.v1 as components
 from commands.catalog import COMMANDS
 from commands.playbooks import PLAYBOOKS
 from utils.filters import filter_commands
+from utils.case_image import generate_case_image
 
 st.set_page_config(
     page_title="Command Hub",
@@ -409,6 +410,47 @@ def render_command_cards(filtered: list[dict]) -> None:
     components.html(grid_html, height=n_rows * 340 + 20, scrolling=False)
 
 
+def render_image_generator(command_info: dict, widget_key: str) -> None:
+    """Botão de gerar + baixar a imagem 'Antes x Depois' de um comando."""
+    safe_name = command_info["command"].strip("/").lower().replace(" ", "-")
+    bytes_key = f"img_bytes__{widget_key}"
+
+    if st.button("🖼️ Gerar imagem (Antes × Depois)", key=f"gen__{widget_key}", use_container_width=True):
+        st.session_state[bytes_key] = generate_case_image(
+            command_info["command"],
+            command_info["category"],
+            command_info["description"],
+            command_info["example"],
+        )
+
+    image_bytes = st.session_state.get(bytes_key)
+    if image_bytes:
+        st.image(image_bytes, use_container_width=True)
+        st.download_button(
+            "⬇️ Baixar PNG (LinkedIn/Instagram)",
+            data=image_bytes,
+            file_name=f"case-{safe_name}.png",
+            mime="image/png",
+            key=f"dl__{widget_key}",
+            use_container_width=True,
+        )
+
+
+def render_case_image_gallery(filtered: list[dict]) -> None:
+    """Renderiza, para cada comando filtrado, um bloco para gerar a imagem de case."""
+    st.markdown("#### 🖼️ Gerar imagem de case (Antes × Depois)")
+    st.caption(
+        "Gere, para qualquer comando abaixo, uma imagem quadrada pronta para "
+        "publicar no LinkedIn ou Instagram."
+    )
+
+    cols = st.columns(3, gap="medium")
+    for i, item in enumerate(filtered):
+        with cols[i % 3]:
+            with st.expander(f"{item['command']}"):
+                render_image_generator(item, widget_key=item["command"])
+
+
 def render_catalog_tab() -> None:
     categories = get_categories(COMMANDS)
 
@@ -449,6 +491,9 @@ def render_catalog_tab() -> None:
     )
 
     render_command_cards(filtered)
+
+    st.markdown("---")
+    render_case_image_gallery(filtered)
 
     st.markdown(
         """
@@ -537,6 +582,8 @@ def render_playbooks_tab() -> None:
         st.error(f"Comando `{step['command']}` não encontrado no catálogo.")
     else:
         render_step_card(current_step, total_steps, command_info, step["note"])
+        with st.expander("🖼️ Gerar imagem de case deste passo (Antes × Depois)"):
+            render_image_generator(command_info, widget_key=f"pb__{playbook['id']}__{step['command']}")
 
     nav_col1, nav_col2, nav_col3 = st.columns([1, 1, 1])
 
