@@ -88,7 +88,7 @@ COMMANDS = [
 {"command":"/WBS","category":"Projetos","description":"Criar estrutura analítica do projeto.","example":"/WBS: Projeto de dados"},
 {"command":"/SCHEDULE","category":"Projetos","description":"Criar cronograma.","example":"/SCHEDULE: Implantação Power BI"},
 {"command":"/DELIVERABLES","category":"Projetos","description":"Definir entregáveis.","example":"/DELIVERABLES: Projeto BI"},
-{"command":"/REQUIREMENTS","category":"Projetos","description":"Levantar requisitos.","example":"/REQUIREMENTS: Dashboard"},
+{"command":"/REQUIREMENTS-PROJETO","category":"Projetos","description":"Levantar requisitos de projeto.","example":"/REQUIREMENTS-PROJETO: Dashboard"},
 {"command":"/USERSTORY","category":"Projetos","description":"Criar User Stories.","example":"/USERSTORY: Analista comercial"},
 {"command":"/ACCEPTANCE","category":"Projetos","description":"Definir critérios de aceite.","example":"/ACCEPTANCE: Dashboard"},
 {"command":"/RACI","category":"Projetos","description":"Criar matriz RACI.","example":"/RACI: Projeto de BI"},
@@ -142,4 +142,54 @@ COMMANDS = [
 {"command":"/PORTFOLIO","category":"Comandos Especiais","description":"Transformar projeto em projeto de portfólio.","example":"/PORTFOLIO: Meu projeto Python"},
 {"command":"/GITHUB-PROJECT","category":"Comandos Especiais","description":"Gerar estrutura completa de projeto GitHub.","example":"/GITHUB-PROJECT: Dashboard de vendas"},
 {"command":"/END2END","category":"Comandos Especiais","description":"Criar solução completa: Fonte → ETL → Banco → BI → Insight → Decisão.","example":"/END2END: Projeto de vendas"},
+
+# IA / Machine Learning
+{"command":"/ML","category":"IA / Machine Learning","description":"Criar ou explicar modelo de Machine Learning.","example":"/ML: Prever churn de clientes"},
+{"command":"/CLASSIFICATION","category":"IA / Machine Learning","description":"Resolver problema de classificação.","example":"/CLASSIFICATION: Prever cancelamento"},
+{"command":"/REGRESSION","category":"IA / Machine Learning","description":"Resolver problema de regressão.","example":"/REGRESSION: Prever receita futura"},
+{"command":"/CLUSTERING","category":"IA / Machine Learning","description":"Agrupar dados por similaridade.","example":"/CLUSTERING: Segmentar clientes"},
+{"command":"/FEATURE-ENGINEERING","category":"IA / Machine Learning","description":"Criar ou selecionar variáveis para o modelo.","example":"/FEATURE-ENGINEERING: Dados de vendas"},
+{"command":"/MODEL-EVAL","category":"IA / Machine Learning","description":"Avaliar performance de modelo.","example":"/MODEL-EVAL: Comparar acurácia e recall"},
+{"command":"/LLM-PROMPT","category":"IA / Machine Learning","description":"Criar prompt otimizado para LLM.","example":"/LLM-PROMPT: Extrair dados de contrato"},
+
+# Cloud / Engenharia de Dados
+{"command":"/AZURE","category":"Cloud / Engenharia de Dados","description":"Resolver ou explicar serviços Azure.","example":"/AZURE: Configurar Data Factory"},
+{"command":"/AWS","category":"Cloud / Engenharia de Dados","description":"Resolver ou explicar serviços AWS.","example":"/AWS: Pipeline com S3 e Glue"},
+{"command":"/GCP","category":"Cloud / Engenharia de Dados","description":"Resolver ou explicar serviços GCP.","example":"/GCP: Pipeline com BigQuery"},
+{"command":"/DATABRICKS","category":"Cloud / Engenharia de Dados","description":"Criar notebook ou pipeline Databricks.","example":"/DATABRICKS: Processar dados em Spark"},
+{"command":"/AIRFLOW","category":"Cloud / Engenharia de Dados","description":"Criar DAG de orquestração.","example":"/AIRFLOW: Orquestrar ETL diário"},
+{"command":"/SPARK","category":"Cloud / Engenharia de Dados","description":"Processar dados com Spark.","example":"/SPARK: Agregações em grande volume"},
+{"command":"/KAFKA","category":"Cloud / Engenharia de Dados","description":"Criar arquitetura de streaming.","example":"/KAFKA: Ingestão de eventos em tempo real"},
+{"command":"/DBT","category":"Cloud / Engenharia de Dados","description":"Criar modelos de transformação com dbt.","example":"/DBT: Modelo de vendas"},
+
+# Git / DevOps
+{"command":"/GIT","category":"Git / DevOps","description":"Resolver ou explicar comandos Git.","example":"/GIT: Desfazer último commit"},
+{"command":"/GITBRANCH","category":"Git / DevOps","description":"Definir estratégia de branches.","example":"/GITBRANCH: Fluxo para equipe pequena"},
+{"command":"/PULLREQUEST","category":"Git / DevOps","description":"Criar descrição de Pull Request.","example":"/PULLREQUEST: Nova funcionalidade de filtro"},
+{"command":"/CICD","category":"Git / DevOps","description":"Criar pipeline de CI/CD.","example":"/CICD: Testes automáticos no GitHub Actions"},
+{"command":"/DOCKER","category":"Git / DevOps","description":"Criar ou explicar Dockerfile.","example":"/DOCKER: Empacotar app Streamlit"},
+
+# Excel
+{"command":"/EXCEL","category":"Excel","description":"Resolver ou explicar Excel.","example":"/EXCEL: Como criar tabela dinâmica?"},
+{"command":"/EXCEL-FORMULA","category":"Excel","description":"Criar fórmula do Excel.","example":"/EXCEL-FORMULA: Somar por categoria"},
+{"command":"/VBA","category":"Excel","description":"Criar macro em VBA.","example":"/VBA: Automatizar exportação de relatório"},
+{"command":"/PIVOTTABLE","category":"Excel","description":"Estruturar tabela dinâmica.","example":"/PIVOTTABLE: Vendas por região e mês"},
+
+# Estatística
+{"command":"/STATS","category":"Estatística","description":"Explicar ou aplicar conceito estatístico.","example":"/STATS: Desvio padrão vs variância"},
+{"command":"/HYPOTHESIS-TEST","category":"Estatística","description":"Criar teste de hipótese.","example":"/HYPOTHESIS-TEST: Comparar duas campanhas"},
+{"command":"/ABTEST","category":"Estatística","description":"Estruturar teste A/B.","example":"/ABTEST: Nova página de checkout"},
+{"command":"/CORRELATION","category":"Estatística","description":"Analisar correlação entre variáveis.","example":"/CORRELATION: Preço vs volume de vendas"},
+{"command":"/FORECAST","category":"Estatística","description":"Criar previsão de série temporal.","example":"/FORECAST: Vendas dos próximos 3 meses"},
+
+# Carreira
+{"command":"/RESUME-CV","category":"Carreira","description":"Criar ou revisar currículo.","example":"/RESUME-CV: Vaga de Analista de Dados"},
+{"command":"/LINKEDIN-PROFILE","category":"Carreira","description":"Otimizar perfil do LinkedIn.","example":"/LINKEDIN-PROFILE: Perfil de Data Analyst"},
+{"command":"/INTERVIEW-PREP","category":"Carreira","description":"Preparar para entrevista técnica.","example":"/INTERVIEW-PREP: Vaga de BI Analyst"},
+{"command":"/PORTFOLIO-CASE","category":"Carreira","description":"Transformar projeto pessoal em case de portfólio.","example":"/PORTFOLIO-CASE: Projeto de automação Python"},
+
+# Governança / Segurança
+{"command":"/LGPD","category":"Governança / Segurança","description":"Avaliar conformidade com LGPD.","example":"/LGPD: Tratamento de dados de clientes"},
+{"command":"/DATASECURITY","category":"Governança / Segurança","description":"Analisar segurança dos dados.","example":"/DATASECURITY: Banco de dados exposto"},
+{"command":"/ACCESSCONTROL","category":"Governança / Segurança","description":"Definir controle de acesso.","example":"/ACCESSCONTROL: Dashboard multi-área"},
 ]

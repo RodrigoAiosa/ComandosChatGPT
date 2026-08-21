@@ -1,8 +1,12 @@
-def filter_commands(commands, search="", category="Todas"):
+def filter_commands(commands, search="", categories=None):
+    """
+    categories: None ou lista vazia = todas as categorias.
+    Caso contrário, filtra pelas categorias informadas.
+    """
     search = (search or "").strip().lower()
     result = commands
-    if category != "Todas":
-        result = [c for c in result if c["category"] == category]
+    if categories:
+        result = [c for c in result if c["category"] in categories]
     if search:
         result = [
             c for c in result

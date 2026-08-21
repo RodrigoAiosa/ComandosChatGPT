@@ -5,24 +5,28 @@ Biblioteca pesquisável de comandos para Dados, BI, SQL, Python, Gestão, Projet
 ## Recursos
 
 - Pesquisa por comando, categoria, descrição e exemplo
-- Filtro por categoria
+- Filtro por múltiplas categorias
 - Ordenação
-- Cards visuais
-- Exemplos prontos para copiar
+- Cards visuais com efeito 3D
+- Botão de copiar exemplo para a área de transferência
 - Estrutura modular para adicionar novos comandos
+- Testes unitários (`pytest`) para a lógica de filtros
 
 ## Estrutura
 
 ```text
-comando_hub/
+ComandosChatGPT/
 ├── app.py
 ├── requirements.txt
 ├── README.md
+├── .gitignore
 ├── assets/
 │   └── styles.css
 ├── commands/
 │   ├── __init__.py
 │   └── catalog.py
+├── tests/
+│   └── test_filters.py
 └── utils/
     ├── __init__.py
     └── filters.py
