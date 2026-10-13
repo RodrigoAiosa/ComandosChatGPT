@@ -9,6 +9,7 @@ from commands.catalog import COMMANDS
 from commands.playbooks import PLAYBOOKS
 from utils.filters import filter_commands
 from utils.case_image import generate_case_image
+from esconder_selo import esconder_selo_streamlit
 
 st.set_page_config(
     page_title="Command Hub",
@@ -16,6 +17,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+esconder_selo_streamlit()  # oculta os controles do Streamlit Cloud
 
 
 @st.cache_data
