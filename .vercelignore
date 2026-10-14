@@ -1,0 +1,8 @@
+*.py
+requirements.txt
+run.bat
+tests/
+utils/
+commands/
+.streamlit/
+assets/fonts/

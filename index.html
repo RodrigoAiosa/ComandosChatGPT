@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command Hub</title>
+<meta name="description" content="Biblioteca pesquisável de comandos para ChatGPT: Dados, BI, SQL, Python, Gestão, Conteúdo e mais.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<style>
+:root {
+    --bg: #0b0d12;
+    --card: #111620;
+    --border: #292f3d;
+    --text: #f5f7fb;
+    --muted: #9aa4b2;
+    --accent: #8b5cf6;
+    --accent-soft: #a78bfa;
+    --accent-light: #c4b5fd;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 8% 0%, rgba(139,92,246,.15), transparent 30%),
+        radial-gradient(circle at 92% 8%, rgba(59,130,246,.10), transparent 25%),
+        var(--bg);
+    background-attachment: fixed;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 24px 3rem;
+}
+
+/* ---------- Hero ---------- */
+.hero { padding: 35px 0 28px; }
+
+.eyebrow {
+    color: var(--accent-soft);
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.hero h1 {
+    margin: 8px 0;
+    font-size: 3.1rem;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.hero h1 span { color: var(--accent-soft); }
+
+.hero p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 760px;
+    line-height: 1.5;
+}
+
+/* ---------- Tabs ---------- */
+.tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: 12px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: .95rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--text); }
+
+.tab-btn[aria-selected="true"] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+}
+
+.tab-panel[hidden] { display: none; }
+
+/* ---------- Controles ---------- */
+.controls {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    align-items: end;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.input, .select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: rgba(18,22,32,.85);
+    color: var(--text);
+    font: inherit;
+    font-size: .95rem;
+    outline: none;
+}
+
+.input:focus, .select:focus { border-color: var(--accent); }
+
+.select { cursor: pointer; }
+
+.select option { background: #121620; }
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.chip {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(18,22,32,.7);
+    color: var(--muted);
+    font: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: all .15s ease;
+}
+
+.chip:hover { color: var(--text); border-color: rgba(139,92,246,.5); }
+
+.chip[aria-pressed="true"] {
+    background: rgba(139,92,246,.18);
+    border-color: rgba(139,92,246,.7);
+    color: #ddd6fe;
+}
+
+.chip.clear {
+    border-style: dashed;
+}
+
+.result-count {
+    color: var(--muted);
+    margin: 20px 0;
+}
+
+/* ---------- Cards 3D ---------- */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.flip-card {
+    width: 100%;
+    height: 320px;
+    perspective: 1200px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .75s cubic-bezier(.4,.2,.2,1);
+}
+
+.flip-card:hover .flip-card-inner,
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--text);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 12px 35px rgba(0,0,0,.18);
+}
+
+.flip-card-front {
+    background: linear-gradient(145deg, #121620, #0b0e15);
+    cursor: pointer;
+}
+
+.flip-card-back {
+    background: linear-gradient(145deg, #1b1331, #0d0f1b);
+    transform: rotateY(180deg);
+    border-color: rgba(139,92,246,.65);
+    justify-content: flex-start;
+}
+
+.flip-card:hover .flip-card-front,
+.flip-card:hover .flip-card-back,
+.flip-card.flipped .flip-card-back {
+    border-color: rgba(139,92,246,.9);
+    box-shadow:
+        0 0 0 1px rgba(139,92,246,.18),
+        0 0 35px rgba(139,92,246,.18),
+        0 20px 45px rgba(0,0,0,.28);
+}
+
+.back-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.back-scroll::-webkit-scrollbar { width: 5px; }
+.back-scroll::-webkit-scrollbar-thumb {
+    background: rgba(139,92,246,.4);
+    border-radius: 3px;
+}
+
+.back-actions {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+}
+
+.tag {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(139,92,246,.13);
+    color: var(--accent-light);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.flip-card h3 {
+    margin: 13px 0 8px;
+    font-size: 19px;
+    word-break: break-word;
+}
+
+.flip-card p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+    margin: 0 0 12px;
+}
+
+.command-example,
+.example-box {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #d6d9e0;
+}
+
+.example-box {
+    padding: 9px 10px;
+    border: 1px solid rgba(139,92,246,.25);
+    border-radius: 9px;
+    background: rgba(0,0,0,.18);
+    color: #ddd6fe;
+}
+
+.detail-label {
+    margin: 5px 0 4px;
+    color: var(--accent-soft);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.flip-card-back p {
+    font-size: 11px;
+    margin-bottom: 6px;
+    color: #c3c9d4;
+}
+
+.flip-card-back strong { color: #eee9ff; }
+
+.flip-hint {
+    color: var(--accent-soft);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.flip-hint span {
+    display: inline-block;
+    margin-right: 6px;
+    transition: transform .6s ease;
+}
+
+.flip-card:hover .flip-hint span { transform: rotate(180deg); }
+
+.btn {
+    padding: 7px 11px;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: #ddd6fe;
+    background: rgba(139,92,246,.18);
+    border: 1px solid rgba(139,92,246,.4);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+
+.btn:hover { background: rgba(139,92,246,.32); }
+
+.btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover { background: #7c4ef0; }
+
+.empty {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(18,22,32,.7);
+    color: var(--muted);
+}
+
+.footer-tip {
+    margin: 28px 0 20px;
+    padding: 13px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(18,22,32,.7);
+    color: var(--muted);
+    font-size: .82rem;
+    line-height: 1.5;
+}
+
+.footer-tip strong { color: var(--accent-light); }
+
+/* ---------- Playbooks ---------- */
+.pb-intro {
+    color: var(--muted);
+    margin: 0 0 16px;
+}
+
+.pb-select-wrap { max-width: 560px; }
+
+.pb-desc {
+    margin: 18px 0;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.07);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    border-radius: 999px;
+    transition: width .35s ease;
+}
+
+.step-card {
+    border: 1px solid rgba(139,92,246,.4);
+    border-radius: 18px;
+    padding: 26px 28px;
+    background: linear-gradient(145deg, #1b1331, #0d0f1b);
+    box-shadow: 0 12px 35px rgba(0,0,0,.25);
+}
+
+.step-number {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(139,92,246,.18);
+    color: var(--accent-light);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin: 0 8px 10px 0;
+    vertical-align: middle;
+}
+
+.step-card h2 {
+    margin: 4px 0 12px;
+    font-size: 26px;
+}
+
+.step-note {
+    font-size: 14px;
+    color: #ddd6fe;
+    background: rgba(139,92,246,.10);
+    border-left: 3px solid rgba(139,92,246,.7);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+}
+
+.step-card .detail-label { margin-top: 12px; }
+
+.step-card p {
+    color: #c3c9d4;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 6px;
+}
+
+.step-card .example-box {
+    white-space: normal;
+    font-size: 13px;
+}
+
+.step-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.step-actions .btn,
+.nav-row .btn {
+    font-size: 13px;
+    padding: 10px 16px;
+}
+
+.nav-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 18px 0 28px;
+}
+
+.checklist h4 {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+}
+
+.checklist ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.checklist li {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--muted);
+    line-height: 1.45;
+    cursor: pointer;
+}
+
+.checklist li:hover { background: rgba(255,255,255,.03); }
+
+.checklist li.done .cmd { text-decoration: line-through; }
+
+.checklist li.current {
+    background: rgba(139,92,246,.10);
+    color: var(--text);
+}
+
+.checklist .cmd {
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.checklist li.current .cmd { color: var(--accent-light); }
+
+/* ---------- Modal de imagem ---------- */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(5,6,10,.78);
+    backdrop-filter: blur(4px);
+}
+
+.modal[hidden] { display: none; }
+
+.modal-box {
+    width: 100%;
+    max-width: 560px;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    border: 1px solid rgba(139,92,246,.45);
+    border-radius: 18px;
+    background: #0f111a;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+}
+
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.modal-head h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.icon-btn:hover { color: var(--text); }
+
+.modal canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.modal-actions .btn {
+    font-size: 13px;
+    padding: 10px 16px;
+}
+
+.site-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    color: var(--muted);
+    font-size: .8rem;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translate(-50%, 20px);
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #1b1331;
+    border: 1px solid rgba(139,92,246,.6);
+    color: #ddd6fe;
+    font-size: .85rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+    z-index: 60;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* ---------- Responsividade ---------- */
+@media (max-width: 900px) {
+    .card-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 2.3rem; }
+}
+
+@media (max-width: 600px) {
+    .container { padding: 1rem 16px 2rem; }
+    .hero { padding: 20px 0 18px; }
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1rem; }
+    .controls { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .step-card { padding: 20px; }
+    .step-card h2 { font-size: 22px; }
+    .nav-row { grid-template-columns: 1fr 1fr; }
+    .nav-row .btn-primary { grid-column: 1 / -1; order: -1; }
+}
+
+@media (hover: none) {
+    .flip-card:hover .flip-card-inner { transform: none; }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flip-card-inner { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+    <header class="hero">
+        <div class="eyebrow">COMMAND HUB</div>
+        <h1>Biblioteca de <span>Comandos</span></h1>
+        <p>
+            Pesquise, filtre e explore comandos para acelerar seus projetos
+            de Dados, BI, SQL, Python, Gestão e Automação.
+        </p>
+    </header>
+
+    <nav class="tabs" role="tablist">
+        <button class="tab-btn" role="tab" id="tab-catalog" aria-controls="panel-catalog" aria-selected="true">📚 Catálogo de comandos</button>
+        <button class="tab-btn" role="tab" id="tab-playbooks" aria-controls="panel-playbooks" aria-selected="false">🧩 Playbooks guiados</button>
+    </nav>
+
+    <!-- ================= Catálogo ================= -->
+    <section class="tab-panel" id="panel-catalog" role="tabpanel" aria-labelledby="tab-catalog">
+        <div class="controls">
+            <div class="field">
+                <label for="search">🔎 Pesquisar</label>
+                <input class="input" id="search" type="search" placeholder="Ex.: DAX, SQL, dashboard, ROI..." autocomplete="off">
+            </div>
+            <div class="field">
+                <label for="sort">Ordenar</label>
+                <select class="select" id="sort">
+                    <option value="command">Comando</option>
+                    <option value="category">Categoria</option>
+                    <option value="description">Descrição</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="chips" id="chips" aria-label="Categorias"></div>
+
+        <div class="result-count" id="count"></div>
+        <div class="card-grid" id="grid"></div>
+
+        <div class="footer-tip">
+            <strong>💡 Dica:</strong>
+            passe o mouse sobre qualquer comando (ou toque nele, no celular) para ver os detalhes.
+            No verso, use <strong>Copiar exemplo</strong> para levar o comando direto para o ChatGPT,
+            ou <strong>Gerar imagem</strong> para criar um card "Antes × Depois" pronto para LinkedIn/Instagram.
+        </div>
+    </section>
+
+    <!-- ================= Playbooks ================= -->
+    <section class="tab-panel" id="panel-playbooks" role="tabpanel" aria-labelledby="tab-playbooks" hidden>
+        <p class="pb-intro">Sequências guiadas de comandos para resolver um objetivo do início ao fim.</p>
+
+        <div class="field pb-select-wrap">
+            <label for="pb-select">Escolha um playbook</label>
+            <select class="select" id="pb-select"></select>
+        </div>
+
+        <div class="pb-desc" id="pb-desc"></div>
+
+        <div class="progress" aria-hidden="true"><div class="progress-bar" id="pb-progress"></div></div>
+
+        <div id="pb-step"></div>
+
+        <div class="nav-row">
+            <button class="btn" id="pb-prev">◀ Anterior</button>
+            <button class="btn" id="pb-reset">↺ Reiniciar</button>
+            <button class="btn btn-primary" id="pb-next">Próximo ▶</button>
+        </div>
+
+        <div class="checklist">
+            <h4>Checklist do playbook</h4>
+            <ol id="pb-checklist"></ol>
+        </div>
+    </section>
+
+    <footer class="site-footer">Command Hub • comandos prontos para o ChatGPT</footer>
+</div>
+
+<!-- Modal da imagem "Antes × Depois" -->
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3 id="modal-title">🖼️ Imagem de case (Antes × Depois)</h3>
+            <button class="icon-btn" id="modal-close" aria-label="Fechar">×</button>
+        </div>
+        <canvas id="case-canvas" width="1080" height="1080"></canvas>
+        <div class="modal-actions">
+            <button class="btn btn-primary" id="modal-download">⬇️ Baixar PNG (LinkedIn/Instagram)</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const COMMANDS = [{"command":"/INFOGRAFIC","category":"Conteúdo Visual","description":"Criar um infográfico sobre um tema.","example":"/INFOGRAFIC: Fluxo de vida dos dados"},{"command":"/DIAGRAM","category":"Conteúdo Visual","description":"Criar um diagrama explicativo.","example":"/DIAGRAM: Arquitetura de BI"},{"command":"/FLOWCHART","category":"Conteúdo Visual","description":"Criar um fluxograma.","example":"/FLOWCHART: Processo de ETL"},{"command":"/MINDMAP","category":"Conteúdo Visual","description":"Criar um mapa mental.","example":"/MINDMAP: Ecossistema de Dados"},{"command":"/TIMELINE","category":"Conteúdo Visual","description":"Criar uma linha do tempo.","example":"/TIMELINE: Evolução do BI"},{"command":"/FRAMEWORK","category":"Conteúdo Visual","description":"Transformar um conceito em framework visual.","example":"/FRAMEWORK: Governança de Dados"},{"command":"/PROCESS","category":"Conteúdo Visual","description":"Representar um processo visualmente.","example":"/PROCESS: Dado até Insight"},{"command":"/COMPARISON","category":"Conteúdo Visual","description":"Criar comparação visual entre conceitos.","example":"/COMPARISON: Excel vs Power BI"},{"command":"/ROADMAP","category":"Conteúdo Visual","description":"Criar roadmap visual.","example":"/ROADMAP: Evolução para Data Analyst"},{"command":"/PYRAMID","category":"Conteúdo Visual","description":"Criar estrutura em formato de pirâmide.","example":"/PYRAMID: Maturidade de Dados"},{"command":"/CYCLE","category":"Conteúdo Visual","description":"Criar ciclo visual.","example":"/CYCLE: Ciclo de vida dos dados"},{"command":"/FUNNEL","category":"Conteúdo Visual","description":"Criar funil visual.","example":"/FUNNEL: Funil de vendas"},{"command":"/PBI","category":"Power BI / BI","description":"Resolver ou explicar Power BI.","example":"/PBI: Como melhorar meu modelo?"},{"command":"/DAX","category":"Power BI / BI","description":"Criar ou otimizar DAX.","example":"/DAX: Receita acumulada"},{"command":"/M","category":"Power BI / BI","description":"Criar código Power Query/M.","example":"/M: Remover duplicidades"},{"command":"/TMDL","category":"Power BI / BI","description":"Criar scripts TMDL.","example":"/TMDL: Criar relacionamentos"},{"command":"/MODEL","category":"Power BI / BI","description":"Projetar modelo dimensional.","example":"/MODEL: Modelo de vendas"},{"command":"/STARSCHEMA","category":"Power BI / BI","description":"Criar modelo estrela.","example":"/STARSCHEMA: Vendas"},{"command":"/DASHBOARD","category":"Power BI / BI","description":"Estruturar dashboard.","example":"/DASHBOARD: Dashboard comercial"},{"command":"/KPI","category":"Power BI / BI","description":"Criar indicadores e KPIs.","example":"/KPI: Indicadores comerciais"},{"command":"/DATAMODEL","category":"Power BI / BI","description":"Analisar modelagem.","example":"/DATAMODEL: Avaliar meu modelo"},{"command":"/BESTPRACTICES","category":"Power BI / BI","description":"Aplicar boas práticas.","example":"/BESTPRACTICES: Power BI"},{"command":"/PBI-PERFORMANCE","category":"Power BI / BI","description":"Otimizar modelo e relatório.","example":"/PBI-PERFORMANCE: Modelo lento"},{"command":"/DAX-PERFORMANCE","category":"Power BI / BI","description":"Otimizar medidas DAX.","example":"/DAX-PERFORMANCE: Otimize esta medida"},{"command":"/SQL","category":"SQL / Banco de Dados","description":"Criar ou explicar SQL.","example":"/SQL: Consulta de vendas por mês"},{"command":"/SQL-OPTIMIZE","category":"SQL / Banco de Dados","description":"Otimizar consulta SQL.","example":"/SQL-OPTIMIZE: Otimize esta consulta"},{"command":"/SQL-PERFORMANCE","category":"SQL / Banco de Dados","description":"Analisar performance.","example":"/SQL-PERFORMANCE: Query lenta"},{"command":"/SQL-INDEX","category":"SQL / Banco de Dados","description":"Sugerir índices.","example":"/SQL-INDEX: Tabela com 1 bilhão de linhas"},{"command":"/SQL-VIEW","category":"SQL / Banco de Dados","description":"Criar Views.","example":"/SQL-VIEW: View de vendas"},{"command":"/SQL-CTE","category":"SQL / Banco de Dados","description":"Trabalhar com CTEs.","example":"/SQL-CTE: Ranking por região"},{"command":"/SQL-JOIN","category":"SQL / Banco de Dados","description":"Explicar e otimizar JOINs.","example":"/SQL-JOIN: INNER vs LEFT"},{"command":"/SQL-WINDOW","category":"SQL / Banco de Dados","description":"Criar Window Functions.","example":"/SQL-WINDOW: Ranking de clientes"},{"command":"/SQL-GROUPING","category":"SQL / Banco de Dados","description":"GROUP BY, ROLLUP, CUBE etc.","example":"/SQL-GROUPING: Total por região e geral"},{"command":"/SQL-DATAQUALITY","category":"SQL / Banco de Dados","description":"Validar qualidade dos dados.","example":"/SQL-DATAQUALITY: Detectar duplicidades"},{"command":"/SQL-MODEL","category":"SQL / Banco de Dados","description":"Modelagem de banco.","example":"/SQL-MODEL: Banco de vendas"},{"command":"/SQL-1BILLION","category":"SQL / Banco de Dados","description":"Estratégias para grandes volumes.","example":"/SQL-1BILLION: Tabela com 1 bilhão de registros"},{"command":"/PYTHON","category":"Python / Automação","description":"Criar ou explicar Python.","example":"/PYTHON: Ler arquivo Excel"},{"command":"/PANDAS","category":"Python / Automação","description":"Manipulação com Pandas.","example":"/PANDAS: Agrupar vendas"},{"command":"/POLARS","category":"Python / Automação","description":"Manipulação com Polars.","example":"/POLARS: Processar grande volume"},{"command":"/ETL","category":"Python / Automação","description":"Criar processo ETL.","example":"/ETL: API → SQL Server"},{"command":"/AUTOMATION","category":"Python / Automação","description":"Criar automação.","example":"/AUTOMATION: Automatizar relatório"},{"command":"/STREAMLIT","category":"Python / Automação","description":"Criar aplicação Streamlit.","example":"/STREAMLIT: Dashboard de vendas"},{"command":"/API","category":"Python / Automação","description":"Consumir ou integrar APIs.","example":"/API: Consumir API pública"},{"command":"/SCRAPING","category":"Python / Automação","description":"Web scraping.","example":"/SCRAPING: Extrair dados de um site"},{"command":"/PLAYWRIGHT","category":"Python / Automação","description":"Automação com Playwright.","example":"/PLAYWRIGHT: Automatizar navegador"},{"command":"/SELENIUM","category":"Python / Automação","description":"Automação com Selenium.","example":"/SELENIUM: Fazer login automático"},{"command":"/GITHUB","category":"Python / Automação","description":"Estruturar projeto GitHub.","example":"/GITHUB: Criar estrutura do projeto"},{"command":"/REQUIREMENTS","category":"Python / Automação","description":"Criar requirements.txt.","example":"/REQUIREMENTS: Dependências do projeto"},{"command":"/README","category":"Python / Automação","description":"Criar documentação README.","example":"/README: Documentar projeto"},{"command":"/DATAANALYSIS","category":"Análise / Dados","description":"Fazer análise exploratória.","example":"/DATAANALYSIS: Analise esta base"},{"command":"/EDA","category":"Análise / Dados","description":"Exploratory Data Analysis.","example":"/EDA: Explorar dataset"},{"command":"/INSIGHT","category":"Análise / Dados","description":"Encontrar insights.","example":"/INSIGHT: Encontre os principais insights"},{"command":"/DATACLEANING","category":"Análise / Dados","description":"Identificar problemas nos dados.","example":"/DATACLEANING: Limpar dataset"},{"command":"/DATAQUALITY","category":"Análise / Dados","description":"Avaliar qualidade dos dados.","example":"/DATAQUALITY: Auditar base"},{"command":"/DATAVALIDATION","category":"Análise / Dados","description":"Criar validações.","example":"/DATAVALIDATION: Validar vendas"},{"command":"/DATAGOVERNANCE","category":"Análise / Dados","description":"Governança de dados.","example":"/DATAGOVERNANCE: Criar política"},{"command":"/DATALIFECYCLE","category":"Análise / Dados","description":"Explicar ciclo de vida dos dados.","example":"/DATALIFECYCLE: Do dado à decisão"},{"command":"/DATAMART","category":"Análise / Dados","description":"Projetar Data Mart.","example":"/DATAMART: Data Mart comercial"},{"command":"/DATAWAREHOUSE","category":"Análise / Dados","description":"Projetar Data Warehouse.","example":"/DATAWAREHOUSE: DW corporativo"},{"command":"/DATALAKE","category":"Análise / Dados","description":"Estruturar Data Lake.","example":"/DATALAKE: Arquitetura"},{"command":"/LAKEHOUSE","category":"Análise / Dados","description":"Estruturar Lakehouse.","example":"/LAKEHOUSE: Arquitetura moderna"},{"command":"/PRIORITYMATRIX","category":"Gestão / Negócios","description":"Criar matriz de prioridades.","example":"/PRIORITYMATRIX: Organize estas demandas"},{"command":"/SWOT","category":"Gestão / Negócios","description":"Criar análise SWOT.","example":"/SWOT: Projeto de BI"},{"command":"/PDCA","category":"Gestão / Negócios","description":"Estruturar PDCA.","example":"/PDCA: Reduzir retrabalho"},{"command":"/5W2H","category":"Gestão / Negócios","description":"Criar plano 5W2H.","example":"/5W2H: Plano de ação"},{"command":"/OKR","category":"Gestão / Negócios","description":"Criar OKRs.","example":"/OKR: Área de Dados"},{"command":"/PAYBACK","category":"Gestão / Negócios","description":"Calcular payback.","example":"/PAYBACK: Projeto de automação"},{"command":"/COST-BENEFIT","category":"Gestão / Negócios","description":"Análise custo-benefício.","example":"/COST-BENEFIT: Novo projeto"},{"command":"/RISK","category":"Gestão / Negócios","description":"Análise de riscos.","example":"/RISK: Projeto de dados"},{"command":"/ACTIONPLAN","category":"Gestão / Negócios","description":"Criar plano de ação.","example":"/ACTIONPLAN: Corrigir divergências"},{"command":"/DECISION","category":"Gestão / Negócios","description":"Apoiar tomada de decisão.","example":"/DECISION: Escolher arquitetura"},{"command":"/PROJECT","category":"Projetos","description":"Estruturar projeto.","example":"/PROJECT: Projeto de BI"},{"command":"/SCOPE","category":"Projetos","description":"Definir escopo.","example":"/SCOPE: Dashboard comercial"},{"command":"/WBS","category":"Projetos","description":"Criar estrutura analítica do projeto.","example":"/WBS: Projeto de dados"},{"command":"/SCHEDULE","category":"Projetos","description":"Criar cronograma.","example":"/SCHEDULE: Implantação Power BI"},{"command":"/DELIVERABLES","category":"Projetos","description":"Definir entregáveis.","example":"/DELIVERABLES: Projeto BI"},{"command":"/REQUIREMENTS-PROJETO","category":"Projetos","description":"Levantar requisitos de projeto.","example":"/REQUIREMENTS-PROJETO: Dashboard"},{"command":"/USERSTORY","category":"Projetos","description":"Criar User Stories.","example":"/USERSTORY: Analista comercial"},{"command":"/ACCEPTANCE","category":"Projetos","description":"Definir critérios de aceite.","example":"/ACCEPTANCE: Dashboard"},{"command":"/RACI","category":"Projetos","description":"Criar matriz RACI.","example":"/RACI: Projeto de BI"},{"command":"/RISKMATRIX","category":"Projetos","description":"Criar matriz de riscos.","example":"/RISKMATRIX: Projeto de dados"},{"command":"/PROPOSAL","category":"Comercial / Treinamentos","description":"Criar proposta comercial.","example":"/PROPOSAL: Treinamento Power BI"},{"command":"/TRAINING","category":"Comercial / Treinamentos","description":"Estruturar treinamento.","example":"/TRAINING: Excel corporativo"},{"command":"/MENTORING","category":"Comercial / Treinamentos","description":"Estruturar mentoria.","example":"/MENTORING: Dados e BI"},{"command":"/ROI-TRAINING","category":"Comercial / Treinamentos","description":"Calcular ROI de treinamento.","example":"/ROI-TRAINING: Investimento de R$ 20.000"},{"command":"/PRICING","category":"Comercial / Treinamentos","description":"Estruturar precificação.","example":"/PRICING: Projeto de BI"},{"command":"/SCOPE-TRAINING","category":"Comercial / Treinamentos","description":"Definir escopo do treinamento.","example":"/SCOPE-TRAINING: Power BI"},{"command":"/COMMERCIAL","category":"Comercial / Treinamentos","description":"Criar abordagem comercial.","example":"/COMMERCIAL: Serviço de BI"},{"command":"/EMAIL-COMMERCIAL","category":"Comercial / Treinamentos","description":"Criar e-mail comercial.","example":"/EMAIL-COMMERCIAL: Apresentação de proposta"},{"command":"/FOLLOWUP","category":"Comercial / Treinamentos","description":"Criar follow-up.","example":"/FOLLOWUP: Proposta enviada"},{"command":"/PITCH","category":"Comercial / Treinamentos","description":"Criar pitch.","example":"/PITCH: Consultoria de dados"},{"command":"/VALUEPROPOSITION","category":"Comercial / Treinamentos","description":"Criar proposta de valor.","example":"/VALUEPROPOSITION: Automação de BI"},{"command":"/LINKEDIN","category":"LinkedIn / Conteúdo","description":"Criar publicação para LinkedIn.","example":"/LINKEDIN: Meu novo projeto de BI"},{"command":"/STORYTELLING","category":"LinkedIn / Conteúdo","description":"Criar storytelling.","example":"/STORYTELLING: Problema → solução → resultado"},{"command":"/CASE","category":"LinkedIn / Conteúdo","description":"Transformar projeto em case.","example":"/CASE: Automação de relatório"},{"command":"/CAROUSEL","category":"LinkedIn / Conteúdo","description":"Estruturar carrossel.","example":"/CAROUSEL: 10 funções SQL"},{"command":"/POST","category":"LinkedIn / Conteúdo","description":"Criar post.","example":"/POST: Importância da modelagem"},{"command":"/HOOK","category":"LinkedIn / Conteúdo","description":"Criar hooks.","example":"/HOOK: Power BI"},{"command":"/CTA","category":"LinkedIn / Conteúdo","description":"Criar chamadas para ação.","example":"/CTA: Consultoria"},{"command":"/THREAD","category":"LinkedIn / Conteúdo","description":"Criar sequência de conteúdo.","example":"/THREAD: Aprenda SQL"},{"command":"/WHATSAPP","category":"LinkedIn / Conteúdo","description":"Criar mensagem para WhatsApp.","example":"/WHATSAPP: Divulgação de treinamento"},{"command":"/VIDEO-SCRIPT","category":"LinkedIn / Conteúdo","description":"Criar roteiro de vídeo.","example":"/VIDEO-SCRIPT: Tutorial Power BI"},{"command":"/IMPROVE","category":"Revisão / Melhoria","description":"Melhorar um texto.","example":"/IMPROVE: Melhore este texto"},{"command":"/RESUME","category":"Revisão / Melhoria","description":"Resumir conteúdo.","example":"/RESUME: Resuma este texto"},{"command":"/REWRITE","category":"Revisão / Melhoria","description":"Reescrever conteúdo.","example":"/REWRITE: Reescreva de forma executiva"},{"command":"/PROFESSIONAL","category":"Revisão / Melhoria","description":"Tornar mais profissional.","example":"/PROFESSIONAL: Ajuste este texto"},{"command":"/EXECUTIVE","category":"Revisão / Melhoria","description":"Tornar mais executivo.","example":"/EXECUTIVE: Resuma para diretoria"},{"command":"/TECHNICAL","category":"Revisão / Melhoria","description":"Tornar mais técnico.","example":"/TECHNICAL: Explique tecnicamente"},{"command":"/SIMPLE","category":"Revisão / Melhoria","description":"Simplificar.","example":"/SIMPLE: Explique de forma simples"},{"command":"/PERSUASIVE","category":"Revisão / Melhoria","description":"Tornar mais persuasivo.","example":"/PERSUASIVE: Melhore minha proposta"},{"command":"/CRITIQUE","category":"Revisão / Melhoria","description":"Criticar e analisar.","example":"/CRITIQUE: Avalie esta solução"},{"command":"/CHECKLIST","category":"Revisão / Melhoria","description":"Criar checklist.","example":"/CHECKLIST: Implantação de Power BI"},{"command":"/MASTER","category":"Comandos Especiais","description":"Analisar o problema e escolher a melhor abordagem.","example":"/MASTER: Preciso melhorar meu processo de BI"},{"command":"/EXPERT","category":"Comandos Especiais","description":"Responder assumindo papel de especialista.","example":"/EXPERT: Analise este modelo"},{"command":"/DEEPDIVE","category":"Comandos Especiais","description":"Fazer análise aprofundada.","example":"/DEEPDIVE: Arquitetura de dados"},{"command":"/OPTIMIZE","category":"Comandos Especiais","description":"Procurar oportunidades de melhoria.","example":"/OPTIMIZE: Meu processo atual"},{"command":"/AUDIT","category":"Comandos Especiais","description":"Fazer auditoria técnica.","example":"/AUDIT: Meu projeto Power BI"},{"command":"/ARCHITECT","category":"Comandos Especiais","description":"Desenhar arquitetura da solução.","example":"/ARCHITECT: Plataforma de dados"},{"command":"/AUTOMATE","category":"Comandos Especiais","description":"Transformar processo manual em automação.","example":"/AUTOMATE: Relatório mensal"},{"command":"/FROMZERO","category":"Comandos Especiais","description":"Criar solução completa do zero.","example":"/FROMZERO: Dashboard comercial"},{"command":"/PRODUCTION","category":"Comandos Especiais","description":"Preparar solução para produção.","example":"/PRODUCTION: Aplicação Streamlit"},{"command":"/PORTFOLIO","category":"Comandos Especiais","description":"Transformar projeto em projeto de portfólio.","example":"/PORTFOLIO: Meu projeto Python"},{"command":"/GITHUB-PROJECT","category":"Comandos Especiais","description":"Gerar estrutura completa de projeto GitHub.","example":"/GITHUB-PROJECT: Dashboard de vendas"},{"command":"/END2END","category":"Comandos Especiais","description":"Criar solução completa: Fonte → ETL → Banco → BI → Insight → Decisão.","example":"/END2END: Projeto de vendas"},{"command":"/ML","category":"IA / Machine Learning","description":"Criar ou explicar modelo de Machine Learning.","example":"/ML: Prever churn de clientes"},{"command":"/CLASSIFICATION","category":"IA / Machine Learning","description":"Resolver problema de classificação.","example":"/CLASSIFICATION: Prever cancelamento"},{"command":"/REGRESSION","category":"IA / Machine Learning","description":"Resolver problema de regressão.","example":"/REGRESSION: Prever receita futura"},{"command":"/CLUSTERING","category":"IA / Machine Learning","description":"Agrupar dados por similaridade.","example":"/CLUSTERING: Segmentar clientes"},{"command":"/FEATURE-ENGINEERING","category":"IA / Machine Learning","description":"Criar ou selecionar variáveis para o modelo.","example":"/FEATURE-ENGINEERING: Dados de vendas"},{"command":"/MODEL-EVAL","category":"IA / Machine Learning","description":"Avaliar performance de modelo.","example":"/MODEL-EVAL: Comparar acurácia e recall"},{"command":"/LLM-PROMPT","category":"IA / Machine Learning","description":"Criar prompt otimizado para LLM.","example":"/LLM-PROMPT: Extrair dados de contrato"},{"command":"/AZURE","category":"Cloud / Engenharia de Dados","description":"Resolver ou explicar serviços Azure.","example":"/AZURE: Configurar Data Factory"},{"command":"/AWS","category":"Cloud / Engenharia de Dados","description":"Resolver ou explicar serviços AWS.","example":"/AWS: Pipeline com S3 e Glue"},{"command":"/GCP","category":"Cloud / Engenharia de Dados","description":"Resolver ou explicar serviços GCP.","example":"/GCP: Pipeline com BigQuery"},{"command":"/DATABRICKS","category":"Cloud / Engenharia de Dados","description":"Criar notebook ou pipeline Databricks.","example":"/DATABRICKS: Processar dados em Spark"},{"command":"/AIRFLOW","category":"Cloud / Engenharia de Dados","description":"Criar DAG de orquestração.","example":"/AIRFLOW: Orquestrar ETL diário"},{"command":"/SPARK","category":"Cloud / Engenharia de Dados","description":"Processar dados com Spark.","example":"/SPARK: Agregações em grande volume"},{"command":"/KAFKA","category":"Cloud / Engenharia de Dados","description":"Criar arquitetura de streaming.","example":"/KAFKA: Ingestão de eventos em tempo real"},{"command":"/DBT","category":"Cloud / Engenharia de Dados","description":"Criar modelos de transformação com dbt.","example":"/DBT: Modelo de vendas"},{"command":"/GIT","category":"Git / DevOps","description":"Resolver ou explicar comandos Git.","example":"/GIT: Desfazer último commit"},{"command":"/GITBRANCH","category":"Git / DevOps","description":"Definir estratégia de branches.","example":"/GITBRANCH: Fluxo para equipe pequena"},{"command":"/PULLREQUEST","category":"Git / DevOps","description":"Criar descrição de Pull Request.","example":"/PULLREQUEST: Nova funcionalidade de filtro"},{"command":"/CICD","category":"Git / DevOps","description":"Criar pipeline de CI/CD.","example":"/CICD: Testes automáticos no GitHub Actions"},{"command":"/DOCKER","category":"Git / DevOps","description":"Criar ou explicar Dockerfile.","example":"/DOCKER: Empacotar app Streamlit"},{"command":"/EXCEL","category":"Excel","description":"Resolver ou explicar Excel.","example":"/EXCEL: Como criar tabela dinâmica?"},{"command":"/EXCEL-FORMULA","category":"Excel","description":"Criar fórmula do Excel.","example":"/EXCEL-FORMULA: Somar por categoria"},{"command":"/VBA","category":"Excel","description":"Criar macro em VBA.","example":"/VBA: Automatizar exportação de relatório"},{"command":"/PIVOTTABLE","category":"Excel","description":"Estruturar tabela dinâmica.","example":"/PIVOTTABLE: Vendas por região e mês"},{"command":"/STATS","category":"Estatística","description":"Explicar ou aplicar conceito estatístico.","example":"/STATS: Desvio padrão vs variância"},{"command":"/HYPOTHESIS-TEST","category":"Estatística","description":"Criar teste de hipótese.","example":"/HYPOTHESIS-TEST: Comparar duas campanhas"},{"command":"/ABTEST","category":"Estatística","description":"Estruturar teste A/B.","example":"/ABTEST: Nova página de checkout"},{"command":"/CORRELATION","category":"Estatística","description":"Analisar correlação entre variáveis.","example":"/CORRELATION: Preço vs volume de vendas"},{"command":"/FORECAST","category":"Estatística","description":"Criar previsão de série temporal.","example":"/FORECAST: Vendas dos próximos 3 meses"},{"command":"/RESUME-CV","category":"Carreira","description":"Criar ou revisar currículo.","example":"/RESUME-CV: Vaga de Analista de Dados"},{"command":"/LINKEDIN-PROFILE","category":"Carreira","description":"Otimizar perfil do LinkedIn.","example":"/LINKEDIN-PROFILE: Perfil de Data Analyst"},{"command":"/INTERVIEW-PREP","category":"Carreira","description":"Preparar para entrevista técnica.","example":"/INTERVIEW-PREP: Vaga de BI Analyst"},{"command":"/PORTFOLIO-CASE","category":"Carreira","description":"Transformar projeto pessoal em case de portfólio.","example":"/PORTFOLIO-CASE: Projeto de automação Python"},{"command":"/LGPD","category":"Governança / Segurança","description":"Avaliar conformidade com LGPD.","example":"/LGPD: Tratamento de dados de clientes"},{"command":"/DATASECURITY","category":"Governança / Segurança","description":"Analisar segurança dos dados.","example":"/DATASECURITY: Banco de dados exposto"},{"command":"/ACCESSCONTROL","category":"Governança / Segurança","description":"Definir controle de acesso.","example":"/ACCESSCONTROL: Dashboard multi-área"}];
+const PLAYBOOKS = [{"id":"dashboard-zero","title":"Criar um dashboard do zero","description":"Do escopo à divulgação: monte um dashboard completo em Power BI e transforme o resultado em case de portfólio.","steps":[{"command":"/SCOPE","note":"Defina o escopo do dashboard com o cliente ou a área solicitante."},{"command":"/MODEL","note":"Projete o modelo dimensional que vai sustentar o relatório."},{"command":"/DAX","note":"Crie as medidas DAX principais (receita, custo, margem, etc.)."},{"command":"/DASHBOARD","note":"Estruture o layout, as páginas e a navegação do dashboard."},{"command":"/LINKEDIN","note":"Divulgue o resultado final como publicação no LinkedIn."}]},{"id":"auditoria-pbi","title":"Auditoria e otimização de Power BI","description":"Diagnostique um relatório lento, identifique gargalos no modelo e aplique boas práticas de performance.","steps":[{"command":"/AUDIT","note":"Faça a auditoria técnica geral do projeto existente."},{"command":"/DATAMODEL","note":"Avalie a modelagem de dados atual em busca de problemas."},{"command":"/PBI-PERFORMANCE","note":"Otimize o modelo e o relatório como um todo."},{"command":"/DAX-PERFORMANCE","note":"Otimize as medidas DAX mais pesadas encontradas."},{"command":"/BESTPRACTICES","note":"Aplique boas práticas finais de organização e nomenclatura."}]},{"id":"projeto-automacao","title":"Projeto de automação em Python (do zero ao portfólio)","description":"Construa uma automação completa em Python, do processo manual ao repositório publicado no GitHub.","steps":[{"command":"/SCOPE","note":"Defina o escopo e o objetivo da automação."},{"command":"/ETL","note":"Desenhe o processo de ETL, da fonte ao destino final."},{"command":"/PYTHON","note":"Implemente a lógica principal do processo em Python."},{"command":"/AUTOMATION","note":"Transforme o script em uma automação recorrente e confiável."},{"command":"/GITHUB-PROJECT","note":"Estruture o projeto completo para publicação no GitHub."},{"command":"/PORTFOLIO","note":"Transforme o projeto em um case de portfólio apresentável."}]},{"id":"proposta-comercial","title":"Proposta comercial de treinamento","description":"Do escopo à precificação: monte e feche uma proposta de treinamento com follow-up estruturado.","steps":[{"command":"/SCOPE-TRAINING","note":"Defina o escopo e os objetivos do treinamento."},{"command":"/TRAINING","note":"Estruture o conteúdo programático completo."},{"command":"/PRICING","note":"Defina a precificação do treinamento."},{"command":"/PROPOSAL","note":"Monte a proposta comercial completa para o cliente."},{"command":"/EMAIL-COMMERCIAL","note":"Escreva o e-mail de apresentação da proposta."},{"command":"/FOLLOWUP","note":"Crie o follow-up para os dias seguintes ao envio."}]},{"id":"case-linkedin","title":"Case de portfólio para o LinkedIn","description":"Transforme um projeto técnico em uma publicação de alto engajamento, com storytelling e chamada para ação.","steps":[{"command":"/CASE","note":"Transforme o projeto técnico em uma estrutura de case."},{"command":"/STORYTELLING","note":"Aplique o arco: problema → solução → resultado."},{"command":"/HOOK","note":"Crie um gancho forte para a primeira linha do post."},{"command":"/CAROUSEL","note":"Estruture o conteúdo em formato carrossel, se preferir esse formato."},{"command":"/CTA","note":"Finalize com uma chamada para ação clara."}]},{"id":"arquitetura-dados","title":"Arquitetura de dados moderna","description":"Planeje uma arquitetura de dados de ponta a ponta, do lake ao insight de negócio.","steps":[{"command":"/ARCHITECT","note":"Desenhe a arquitetura geral da solução de dados."},{"command":"/DATALAKE","note":"Estruture a camada de Data Lake."},{"command":"/LAKEHOUSE","note":"Avalie a camada Lakehouse, caso o cenário exija."},{"command":"/DATAWAREHOUSE","note":"Projete o Data Warehouse corporativo."},{"command":"/END2END","note":"Amarre a solução completa: fonte → ETL → banco → BI → insight → decisão."}]}];
+
+const CATEGORY_PAIN = {
+    "Power BI / BI": "Relatórios lentos, sem padrão e difíceis de manter.",
+    "SQL / Banco de Dados": "Consultas manuais, lentas e sem otimização.",
+    "Python / Automação": "Processo manual, repetitivo e sujeito a erros.",
+    "Análise / Dados": "Dados brutos, sem análise nem direção clara.",
+    "Gestão / Negócios": "Decisões tomadas no feeling, sem estrutura.",
+    "Projetos": "Projeto sem escopo definido e prazos incertos.",
+    "Comercial / Treinamentos": "Proposta genérica, sem clareza de valor.",
+    "LinkedIn / Conteúdo": "Conteúdo sem engajamento nem direcionamento.",
+    "Revisão / Melhoria": "Texto confuso, informal ou pouco convincente.",
+    "Comandos Especiais": "Sem direção clara de como resolver o problema.",
+    "Conteúdo Visual": "Ideia complexa e difícil de visualizar.",
+    "IA / Machine Learning": "Decisões manuais, sem previsão nem padrão nos dados.",
+    "Cloud / Engenharia de Dados": "Infraestrutura manual, sem escala nem automação.",
+    "Git / DevOps": "Deploys manuais, sem controle de versão nem histórico.",
+    "Excel": "Planilha manual, lenta e propensa a erros.",
+    "Estatística": "Decisões no achismo, sem validação estatística.",
+    "Carreira": "Currículo ou perfil genérico, sem destaque no mercado.",
+    "Governança / Segurança": "Dados sem controle de acesso nem conformidade."
+};
+const DEFAULT_PAIN = "Processo manual, lento e sem padrão definido.";
+
+const byCommand = Object.fromEntries(COMMANDS.map(c => [c.command, c]));
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+
+/* ---------------- Utilidades ---------------- */
+let toastTimer;
+function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+async function copyText(text, btn) {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch (_) {}
+        ta.remove();
+    }
+    if (btn) {
+        const original = btn.innerHTML;
+        btn.innerHTML = "✅ Copiado!";
+        setTimeout(() => { btn.innerHTML = original; }, 1500);
+    }
+    toast("Exemplo copiado para a área de transferência");
+}
+
+/* ---------------- Abas ---------------- */
+function selectTab(name) {
+    ["catalog", "playbooks"].forEach(n => {
+        $("tab-" + n).setAttribute("aria-selected", String(n === name));
+        $("panel-" + n).hidden = n !== name;
+    });
+    try { history.replaceState(null, "", name === "playbooks" ? "#playbooks" : "#"); } catch (_) {}
+}
+$("tab-catalog").addEventListener("click", () => selectTab("catalog"));
+$("tab-playbooks").addEventListener("click", () => selectTab("playbooks"));
+
+/* ---------------- Catálogo ---------------- */
+const categories = [...new Set(COMMANDS.map(c => c.category))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+const selected = new Set();
+
+function renderChips() {
+    const chips = categories.map(cat =>
+        `<button class="chip" data-cat="${esc(cat)}" aria-pressed="${selected.has(cat)}">${esc(cat)}</button>`
+    );
+    if (selected.size) chips.push(`<button class="chip clear" data-clear="1">✕ Limpar filtros</button>`);
+    $("chips").innerHTML = chips.join("");
+}
+
+$("chips").addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    if (btn.dataset.clear) selected.clear();
+    else {
+        const cat = btn.dataset.cat;
+        selected.has(cat) ? selected.delete(cat) : selected.add(cat);
+    }
+    renderChips();
+    renderCatalog();
+});
+
+function filterCommands(search, cats) {
+    const q = (search || "").trim().toLowerCase();
+    let result = COMMANDS;
+    if (cats.size) result = result.filter(c => cats.has(c.category));
+    if (q) {
+        result = result.filter(c =>
+            c.command.toLowerCase().includes(q) ||
+            c.description.toLowerCase().includes(q) ||
+            c.example.toLowerCase().includes(q) ||
+            c.category.toLowerCase().includes(q)
+        );
+    }
+    return result;
+}
+
+function cardHTML(item) {
+    const cmd = esc(item.command), cat = esc(item.category);
+    const desc = esc(item.description), ex = esc(item.example);
+    return `
+<div class="flip-card" data-cmd="${cmd}">
+  <div class="flip-card-inner">
+    <div class="flip-card-front">
+      <div>
+        <div class="tag">${cat}</div>
+        <h3>${cmd}</h3>
+        <p>${desc}</p>
+        <div class="command-example">${ex}</div>
+      </div>
+      <div class="flip-hint"><span>↻</span>Passe o mouse para ver detalhes</div>
+    </div>
+    <div class="flip-card-back">
+      <div class="back-scroll">
+        <div class="tag">${cat}</div>
+        <h3>${cmd}</h3>
+        <div class="detail-label">COMO FUNCIONA</div>
+        <p>O comando <strong>${cmd}</strong> orienta a IA a executar uma tarefa específica relacionada a <strong>${esc(item.category.toLowerCase())}</strong>.</p>
+        <div class="detail-label">DESCRIÇÃO</div>
+        <p>${desc}</p>
+        <div class="detail-label">EXEMPLO</div>
+        <div class="example-box" title="${ex}">${ex}</div>
+      </div>
+      <div class="back-actions">
+        <button class="btn" data-action="copy">📋 Copiar exemplo</button>
+        <button class="btn" data-action="image">🖼️ Gerar imagem</button>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderCatalog() {
+    let list = filterCommands($("search").value, selected);
+    const sort = $("sort").value;
+    const cmp = (a, b) => a.localeCompare(b, "pt-BR");
+    if (sort === "category") list = [...list].sort((a, b) => cmp(a.category, b.category) || cmp(a.command, b.command));
+    else if (sort === "description") list = [...list].sort((a, b) => cmp(a.description, b.description));
+    else list = [...list].sort((a, b) => cmp(a.command, b.command));
+
+    $("count").textContent = `${list.length} ${list.length === 1 ? "comando encontrado" : "comandos encontrados"}`;
+    $("grid").innerHTML = list.length
+        ? list.map(cardHTML).join("")
+        : `<div class="empty">Nenhum comando encontrado. Tente outro termo.</div>`;
+}
+
+$("search").addEventListener("input", renderCatalog);
+$("sort").addEventListener("change", renderCatalog);
+
+$("grid").addEventListener("click", e => {
+    const card = e.target.closest(".flip-card");
+    if (!card) return;
+    const item = byCommand[card.dataset.cmd];
+    const action = e.target.closest("[data-action]");
+    if (action) {
+        e.stopPropagation();
+        if (action.dataset.action === "copy") copyText(item.example, action);
+        else openImageModal(item);
+        return;
+    }
+    // Toque/clique vira o card (útil em telas sem hover)
+    if (!e.target.closest(".back-scroll")) card.classList.toggle("flipped");
+});
+
+/* ---------------- Playbooks ---------------- */
+const pbState = Object.fromEntries(PLAYBOOKS.map(p => [p.id, 0]));
+let currentPb = PLAYBOOKS[0];
+
+$("pb-select").innerHTML = PLAYBOOKS.map(p => `<option value="${esc(p.id)}">${esc(p.title)}</option>`).join("");
+$("pb-select").addEventListener("change", e => {
+    currentPb = PLAYBOOKS.find(p => p.id === e.target.value);
+    renderPlaybook();
+});
+
+function setStep(i) {
+    pbState[currentPb.id] = Math.max(0, Math.min(currentPb.steps.length - 1, i));
+    renderPlaybook();
+}
+
+$("pb-prev").addEventListener("click", () => setStep(pbState[currentPb.id] - 1));
+$("pb-next").addEventListener("click", () => setStep(pbState[currentPb.id] + 1));
+$("pb-reset").addEventListener("click", () => setStep(0));
+
+$("pb-checklist").addEventListener("click", e => {
+    const li = e.target.closest("li");
+    if (li) setStep(Number(li.dataset.i));
+});
+
+function renderPlaybook() {
+    const pb = currentPb;
+    const total = pb.steps.length;
+    const cur = pbState[pb.id];
+    const step = pb.steps[cur];
+    const info = byCommand[step.command];
+
+    $("pb-desc").textContent = pb.description;
+    $("pb-progress").style.width = `${((cur + 1) / total) * 100}%`;
+
+    if (!info) {
+        $("pb-step").innerHTML = `<div class="empty">Comando <code>${esc(step.command)}</code> não encontrado no catálogo.</div>`;
+    } else {
+        $("pb-step").innerHTML = `
+<div class="step-card">
+  <span class="step-number">PASSO ${cur + 1} DE ${total}</span><span class="tag">${esc(info.category)}</span>
+  <h2>${esc(info.command)}</h2>
+  <div class="step-note">🎯 ${esc(step.note)}</div>
+  <div class="detail-label">DESCRIÇÃO</div>
+  <p>${esc(info.description)}</p>
+  <div class="detail-label">EXEMPLO</div>
+  <div class="example-box">${esc(info.example)}</div>
+  <div class="step-actions">
+    <button class="btn" id="step-copy">📋 Copiar exemplo</button>
+    <button class="btn" id="step-image">🖼️ Gerar imagem de case</button>
+  </div>
+</div>`;
+        $("step-copy").addEventListener("click", e => copyText(info.example, e.currentTarget));
+        $("step-image").addEventListener("click", () => openImageModal(info));
+    }
+
+    const isLast = cur === total - 1;
+    $("pb-prev").disabled = cur === 0;
+    $("pb-next").disabled = isLast;
+    $("pb-next").textContent = isLast ? "Concluído ✅" : "Próximo ▶";
+
+    $("pb-checklist").innerHTML = pb.steps.map((s, i) => {
+        const cls = i < cur ? "done" : i === cur ? "current" : "";
+        const icon = i < cur ? "✅" : i === cur ? "▶️" : "⬜";
+        return `<li class="${cls}" data-i="${i}"><span>${icon}</span><span><span class="cmd">${esc(s.command)}</span> — ${esc(s.note)}</span></li>`;
+    }).join("");
+}
+
+/* ---------------- Imagem "Antes × Depois" (canvas) ---------------- */
+const FONT = 'Arial, "Helvetica Neue", Helvetica, sans-serif';
+let lastImage = null;
+
+function roundRect(ctx, x, y, w, h, r, fill) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+}
+
+function wrap(ctx, text, maxWidth) {
+    const words = text.split(/\s+/);
+    const lines = [];
+    let current = "";
+    for (const w of words) {
+        const candidate = (current + " " + w).trim();
+        if (ctx.measureText(candidate).width <= maxWidth) current = candidate;
+        else { if (current) lines.push(current); current = w; }
+    }
+    if (current) lines.push(current);
+    return lines;
+}
+
+function fitText(ctx, text, weight, size, maxWidth) {
+    let s = size;
+    ctx.font = `${weight} ${s}px ${FONT}`;
+    while (ctx.measureText(text).width > maxWidth && s > 14) {
+        s -= 2;
+        ctx.font = `${weight} ${s}px ${FONT}`;
+    }
+    return s;
+}
+
+function drawCaseImage(canvas, item) {
+    const S = 1080, M = 70;
+    const ctx = canvas.getContext("2d");
+    ctx.textBaseline = "top";
+
+    const g = ctx.createLinearGradient(0, 0, 0, S);
+    g.addColorStop(0, "rgb(18,22,32)");
+    g.addColorStop(1, "rgb(27,19,49)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, S, S);
+
+    // Eyebrow
+    ctx.font = `bold 26px ${FONT}`;
+    ctx.fillStyle = "rgb(196,181,253)";
+    ctx.fillText("COMMAND HUB", M, 64);
+
+    // Tag de categoria
+    const tag = item.category.toUpperCase();
+    ctx.font = `bold 24px ${FONT}`;
+    const tagW = ctx.measureText(tag).width + 40;
+    roundRect(ctx, S - M - tagW, 52, tagW, 48, 24, "rgba(139,92,246,.22)");
+    ctx.fillStyle = "rgb(196,181,253)";
+    ctx.fillText(tag, S - M - tagW + 20, 64);
+
+    // Título
+    ctx.font = `bold 52px ${FONT}`;
+    ctx.fillStyle = "rgb(245,247,251)";
+    ctx.textAlign = "center";
+    ctx.fillText("ANTES  ×  DEPOIS", S / 2, 140);
+
+    // Comando
+    fitText(ctx, item.command, "bold", 72, S - M * 2);
+    ctx.fillStyle = "rgb(196,181,253)";
+    ctx.fillText(item.command, S / 2, 222);
+    ctx.textAlign = "left";
+
+    // Caixas
+    const top = 360, bottom = 820, gap = 30;
+    const bw = (S - M * 2 - gap) / 2;
+    const pad = 34;
+    const boxes = [
+        { x: M, label: "ANTES", color: "rgb(248,113,113)", bg: "rgb(58,31,43)",
+          text: CATEGORY_PAIN[item.category] || DEFAULT_PAIN },
+        { x: M + bw + gap, label: "DEPOIS", color: "rgb(167,139,250)", bg: "rgb(30,22,56)",
+          text: `Resolvido com ${item.command}: ${item.description.trim().replace(/\.+$/, "")}.` }
+    ];
+
+    for (const b of boxes) {
+        roundRect(ctx, b.x, top, bw, bottom - top, 28, b.bg);
+        const r = 9, cx = b.x + pad + r, cy = top + pad + 16;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = b.color;
+        ctx.fill();
+        ctx.font = `bold 30px ${FONT}`;
+        ctx.fillText(b.label, b.x + pad + r * 2 + 14, top + pad);
+
+        ctx.font = `30px ${FONT}`;
+        ctx.fillStyle = "rgb(245,247,251)";
+        wrap(ctx, b.text, bw - pad * 2).forEach((line, i) => {
+            ctx.fillText(line, b.x + pad, top + pad + 64 + i * 42);
+        });
+    }
+
+    // Chip do exemplo
+    const exSize = fitText(ctx, item.example, "", 24, S - M * 2 - 50);
+    const exW = ctx.measureText(item.example).width + 50;
+    const exX = (S - exW) / 2;
+    roundRect(ctx, exX, 880, exW, 48, 24, "rgba(0,0,0,.28)");
+    ctx.fillStyle = "rgb(196,181,253)";
+    ctx.fillText(item.example, exX + 25, 880 + (48 - exSize) / 2);
+
+    // Rodapé
+    ctx.font = `24px ${FONT}`;
+    ctx.fillStyle = "rgb(154,164,178)";
+    ctx.textAlign = "center";
+    ctx.fillText("Pronto para LinkedIn / Instagram  •  gerado com Command Hub", S / 2, 990);
+    ctx.textAlign = "left";
+}
+
+function openImageModal(item) {
+    lastImage = item;
+    drawCaseImage($("case-canvas"), item);
+    $("modal").hidden = false;
+    $("modal-close").focus();
+}
+
+function closeModal() {
+    $("modal").hidden = true;
+}
+
+$("modal-close").addEventListener("click", closeModal);
+$("modal").addEventListener("click", e => { if (e.target === $("modal")) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("modal").hidden) closeModal(); });
+
+$("modal-download").addEventListener("click", () => {
+    if (!lastImage) return;
+    const name = lastImage.command.replace(/^\/+|\/+$/g, "").toLowerCase().replace(/\s+/g, "-");
+    const a = document.createElement("a");
+    a.download = `case-${name}.png`;
+    a.href = $("case-canvas").toDataURL("image/png");
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+});
+
+/* ---------------- Inicialização ---------------- */
+renderChips();
+renderCatalog();
+renderPlaybook();
+if (location.hash === "#playbooks") selectTab("playbooks");
+</script>
+</body>
+</html>
